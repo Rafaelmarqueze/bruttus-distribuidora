@@ -7,7 +7,9 @@ import {
   ContactGrid,
   ContactInfo,
   Form,
-  FormGroup
+  FormGroup,
+  ModalOverlay,
+  ModalContent
 } from './styles'
 
 export default function Contact() {
@@ -17,6 +19,7 @@ export default function Contact() {
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [modal, setModal] = useState({ open: false, title: '', text: '' })
 
   const submit = async () => {
     if (isSubmitting) return
@@ -45,9 +48,17 @@ export default function Contact() {
       setWhatsapp('')
       setEmail('')
       setMessage('')
-      alert('Contato enviado com sucesso!')
+      setModal({
+        open: true,
+        title: 'Sucesso',
+        text: 'Contato enviado com sucesso! Em breve um consultor entrará em contato.'
+      })
     } catch (err) {
-      alert('Não foi possível enviar agora. Tente novamente.')
+      setModal({
+        open: true,
+        title: 'Erro',
+        text: 'Não foi possível enviar agora. Tente novamente.'
+      })
     } finally {
       setIsSubmitting(false)
     }
@@ -55,6 +66,28 @@ export default function Contact() {
 
   return (
     <ContactSection id="contato">
+      {modal.open && (
+        <ModalOverlay
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setModal({ open: false, title: '', text: '' })}
+        >
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <h3>{modal.title}</h3>
+            <p>{modal.text}</p>
+            <div className="actions">
+              <button
+                type="button"
+                className='text-white'
+                onClick={() => setModal({ open: false, title: '', text: '' })}
+              >
+                Fechar
+              </button>
+            </div>
+          </ModalContent>
+        </ModalOverlay>
+      )}
+
       <div className="container">
         <ContactGrid>
           

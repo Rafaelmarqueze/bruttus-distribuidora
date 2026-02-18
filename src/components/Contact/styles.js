@@ -134,3 +134,60 @@ export const FormGroup = styled.div`
     min-height: 100px;
   }
 `
+
+export const ModalOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 9999;
+`
+
+export const ModalContent = styled.div`
+  width: 100%;
+  max-width: 520px;
+  background: #161616;
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
+
+  h3 {
+    margin: 0 0 0.5rem 0;
+    font-weight: 900;
+    font-size: 1.25rem;
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.85;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+    gap: 0.75rem;
+  }
+
+  button {
+    width: auto;
+    margin-top: 0;
+    padding: 0.85rem 1.25rem;
+    border-radius: 12px;
+    background: #101010;
+    color: white;
+    font-weight: 800;
+    border: 1px solid #2a2a2a;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+  }
+`
