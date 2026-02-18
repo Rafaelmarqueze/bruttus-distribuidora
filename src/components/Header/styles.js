@@ -5,7 +5,7 @@ export const HeaderContainer = styled.header`
   top: 0;
   left: 0;
   right: 0;
-  background-color: #520109;
+  background-color: ${({ theme }) => theme.colors.reddark};;
   color: ${({ theme }) => theme.colors.white};
   z-index: 1000;
   padding: 1rem 0;
@@ -32,7 +32,7 @@ export const NavLinks = styled.ul`
     top: 70px;
     left: 0;
     right: 0;
-    background: ${({ theme }) => theme.colors.dark};
+    background: ${({ theme }) => theme.colors.reddark};
     flex-direction: column;
     align-items: center;
     padding: 2rem;

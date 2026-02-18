@@ -1,70 +1,84 @@
-import { ContactSection, ContactGrid, Form, FormGroup, SocialLinks } from './styles'
+"use client";
+
+import {
+  ContactSection,
+  ContactGrid,
+  ContactInfo,
+  Form,
+  FormGroup
+} from './styles'
 
 export default function Contact() {
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Implementar lógica de envio
   }
 
   return (
     <ContactSection id="contato">
       <div className="container">
-        <h2>PRONTO PARA ELEVAR O PADRÃO DA SUA HAMBURGUERIA?</h2>
-        <p>Fale com um de nossos consultores e descubra como a Bruttus pode transformar a qualidade dos seus hambúrgueres e impulsionar suas vendas.</p>
-
         <ContactGrid>
-          <div>
-            <h3>Informações de Contato</h3>
-            
-            <div className="contact-info">
-              <h4>WhatsApp</h4>
-              <p>+55 (11) 96324-9706</p>
+          
+          {/* COLUNA ESQUERDA */}
+          <ContactInfo>
+            <h2>
+              PRONTO PARA <span>ELEVAR O PADRÃO</span> DA SUA HAMBURGUERIA?
+            </h2>
+
+            <p>
+              Fale com um de nossos consultores e descubra como a Bruttus pode
+              transformar a qualidade dos seus hambúrgueres e impulsionar suas vendas.
+            </p>
+
+            <div className="info">
+              <strong>WhatsApp</strong>
+              <span>+55 (11) 99999-9999</span>
             </div>
 
-            <div className="contact-info">
-              <h4>E-mail</h4>
-              <p>contato@bruttusburg.com.br</p>
+            <div className="info">
+              <strong>E-mail</strong>
+              <span>comercial@bruttusdistribuidora.com.br</span>
             </div>
 
-            <SocialLinks>
-              <h4>Redes Sociais</h4>
-              <ul>
-                <li><a href="https://wa.me/5511963249706">WhatsApp</a></li>
-                <li><a href="https://t.me/hamburgueria">Telegram</a></li>
-                <li><a href="https://instagram.com/hamburgueria">Instagram</a></li>
-                <li><a href="https://facebook.com/hamburgueria">Facebook</a></li>
-              </ul>
-            </SocialLinks>
-          </div>
+            <div className="info">
+              <strong>Endereço</strong>
+              <span>São Paulo - SP</span>
+            </div>
+          </ContactInfo>
 
+          {/* COLUNA DIREITA */}
           <Form onSubmit={handleSubmit}>
             <FormGroup>
-              <label htmlFor="nome">NOME COMPLETO</label>
-              <input type="text" id="nome" placeholder="Seu nome" required />
+              <label>NOME COMPLETO</label>
+              <input placeholder="Seu nome" />
             </FormGroup>
 
             <FormGroup>
-              <label htmlFor="empresa">NOME DA HAMBURGUERIA</label>
-              <input type="text" id="empresa" placeholder="Sua empresa" required />
+              <label>NOME DA HAMBURGUERIA</label>
+              <input placeholder="Sua empresa" />
             </FormGroup>
+
+            <div className="row">
+              <FormGroup>
+                <label>WHATSAPP</label>
+                <input placeholder="(00) 00000-0000" />
+              </FormGroup>
+
+              <FormGroup>
+                <label>E-MAIL</label>
+                <input placeholder="seu@email.com" />
+              </FormGroup>
+            </div>
 
             <FormGroup>
-              <label htmlFor="whatsapp">WHATSAPP</label>
-              <input type="tel" id="whatsapp" placeholder="(00) 0000-0000" required />
+              <label>MENSAGEM</label>
+              <textarea placeholder="Como podemos ajudar?" />
             </FormGroup>
 
-            <FormGroup>
-              <label htmlFor="email">E-MAIL</label>
-              <input type="email" id="email" placeholder="seu@email.com" required />
-            </FormGroup>
-
-            <FormGroup>
-              <label htmlFor="mensagem">MENSAGEM</label>
-              <textarea id="mensagem" rows="4" placeholder="Como podemos ajudar?"></textarea>
-            </FormGroup>
-
-            <button type="submit">SOLICITAR CONTATO COMERCIAL</button>
+            <button type="submit">
+              SOLICITAR CONTATO COMERCIAL
+            </button>
           </Form>
+
         </ContactGrid>
       </div>
     </ContactSection>

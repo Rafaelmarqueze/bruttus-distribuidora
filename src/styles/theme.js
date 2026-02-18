@@ -9,6 +9,7 @@ const theme = {
     gray: '#666666',
     graydark: '#171717',
     lightGray: '#F5F5F5',
+    reddark: '#520109',
   },
   fonts: {
     primary: "'Inter', sans-serif",

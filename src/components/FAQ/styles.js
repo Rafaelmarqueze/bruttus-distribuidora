@@ -14,6 +14,9 @@ export const FAQSection = styled.section`
       font-size: 2rem;
     }
   }
+    span {
+    color: #FB2C36;
+  }
 `
 
 export const FAQList = styled.div`

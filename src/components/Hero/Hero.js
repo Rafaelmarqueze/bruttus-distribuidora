@@ -1,3 +1,4 @@
+"use client";
 import { HeroSection, HeroContent, Title, Subtitle, CTAButton } from './styles'
 
 export default function Hero() {
@@ -7,7 +8,7 @@ export default function Hero() {
         <HeroContent>
           <Subtitle>DISTRIBUIDORA PREMIUM</Subtitle>
           <Title>
-            BRUTTUS: A QUALIDADE QUE <span>TRANSFORMA SUA HAMBURGUERIA</span>
+            BRUTTUS: A QUALIDADE QUE <span>TRANSFORMA</span> SUA HAMBURGUERIA.
           </Title>
           <p>
             Seja nosso parceiro e leve não apenas os melhores blends de hambúrguer, 
