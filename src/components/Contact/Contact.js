@@ -78,7 +78,7 @@ export default function Contact() {
             <div className="actions">
               <button
                 type="button"
-                className='text-white'
+                className='success-button'
                 onClick={() => setModal({ open: false, title: '', text: '' })}
               >
                 Fechar

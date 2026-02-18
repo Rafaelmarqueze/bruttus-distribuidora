@@ -16,7 +16,7 @@ export default function FAQ() {
     },
     {
       question: "Como funciona a entrega?",
-      answer: "Contamos com logística eficiente em todo território nacional. A entrega é rápida e segura, garantindo que o frescor chegue intacto à sua hamburgueria."
+      answer: "Contamos com logística eficiente na capital de São Paulo. A entrega é rápida e segura, garantindo que o frescor chegue intacto à sua hamburgueria."
     },
     {
       question: "Como faço para me tornar um cliente?",
