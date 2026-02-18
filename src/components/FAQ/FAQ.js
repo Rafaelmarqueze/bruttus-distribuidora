@@ -1,3 +1,4 @@
+"use client";
 import { useState } from 'react'
 import { FAQSection, FAQList, FAQItem, Question, Answer } from './styles'
 
@@ -30,7 +31,7 @@ export default function FAQ() {
   return (
     <FAQSection id="faq">
       <div className="container">
-        <h2>TIRE SUAS DÚVIDAS</h2>
+        <h2>TIRE SUAS <span>DÚVIDAS</span></h2>
         
         <FAQList>
           {faqs.map((faq, index) => (

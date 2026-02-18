@@ -1,7 +1,7 @@
+"use client";
 import { useState } from 'react'
 import { HeaderContainer, Nav, Logo, NavLinks, MobileMenuButton } from './styles'
 import Image from 'next/image'
-import logo from '../../public/images/logo.jpg'
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -12,9 +12,10 @@ export default function Header() {
         <Nav>
           <Logo>
             <Image 
-            src={logo}
+            src="/images/logo.jpg"
             alt="Logo Bruttus"
             width={150}
+            height={70}
             />
           </Logo>
           

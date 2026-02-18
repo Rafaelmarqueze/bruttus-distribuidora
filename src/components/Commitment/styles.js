@@ -1,56 +1,100 @@
-import styled from 'styled-components'
+import styled from "styled-components"
 
 export const CommitmentSection = styled.section`
-  padding: ${({ theme }) => theme.spacing.xl} 0;
-  background: ${({ theme }) => theme.colors.white};
-
-  h2 {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin-bottom: 1rem;
-    max-width: 900px;
-
-    @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-      font-size: 2rem;
-    }
-  }
-
-  > p {
-    font-size: 1.125rem;
-    margin-bottom: ${({ theme }) => theme.spacing.lg};
-    max-width: 800px;
-  }
+  padding: 100px 0;
+  background: #fff;
 `
 
-export const CommitmentGrid = styled.div`
+export const CommitmentWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: ${({ theme }) => theme.spacing.md};
+  grid-template-columns: 1.2fr 1fr;
+  align-items: center;
+  gap: 60px;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+  @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
 `
 
-export const CommitmentItem = styled.div`
-  background: ${({ theme }) => theme.colors.white};
-  padding: ${({ theme }) => theme.spacing.lg};
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  border-left: 4px solid ${({ theme }) => theme.colors.primary};
+export const CommitmentContent = styled.div`
+  h2 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1.2;
+    max-width: 520px;
 
-  h3 {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
-    color: ${({ theme }) => theme.colors.secondary};
+    span {
+      color: #b30000;
+    }
   }
 
   p {
-    color: ${({ theme }) => theme.colors.gray};
+    margin-top: 18px;
+    font-size: 1.05rem;
+    color: #555;
     line-height: 1.6;
+    max-width: 520px;
+  }
+`
+
+export const CommitmentCards = styled.div`
+  margin-top: 35px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+`
+
+export const CommitmentCard = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+
+  padding: 18px 20px;
+  border-radius: 12px;
+  background: #f7f7f7;
+
+  h3 {
+    font-size: 0.95rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.4;
+  }
+`
+
+export const IconCircle = styled.div`
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #b30000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &:after {
+    content: "✓";
+    font-size: 14px;
+    font-weight: bold;
+    color: #b30000;
+  }
+`
+
+export const CommitmentImage = styled.div`
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
   }
 `
