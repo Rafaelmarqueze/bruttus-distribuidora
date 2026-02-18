@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from 'react'
+
 import {
   ContactSection,
   ContactGrid,
@@ -9,8 +11,46 @@ import {
 } from './styles'
 
 export default function Contact() {
-  const handleSubmit = (e) => {
-    e.preventDefault()
+  const [fullName, setFullName] = useState('')
+  const [burgerPlaceName, setBurgerPlaceName] = useState('')
+  const [whatsapp, setWhatsapp] = useState('')
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const submit = async () => {
+    if (isSubmitting) return
+    setIsSubmitting(true)
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          fullName,
+          burgerPlaceName,
+          whatsapp,
+          email,
+          message
+        })
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed')
+      }
+
+      setFullName('')
+      setBurgerPlaceName('')
+      setWhatsapp('')
+      setEmail('')
+      setMessage('')
+      alert('Contato enviado com sucesso!')
+    } catch (err) {
+      alert('Não foi possível enviar agora. Tente novamente.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -31,50 +71,74 @@ export default function Contact() {
 
             <div className="info">
               <strong>WhatsApp</strong>
-              <span>+55 (11) 99999-9999</span>
+              <span>+55 (11) 96324-9706</span>
             </div>
 
             <div className="info">
               <strong>E-mail</strong>
-              <span>comercial@bruttusdistribuidora.com.br</span>
-            </div>
-
-            <div className="info">
-              <strong>Endereço</strong>
-              <span>São Paulo - SP</span>
+              <span>bruttusfornecedor@gmail.com</span>
             </div>
           </ContactInfo>
 
           {/* COLUNA DIREITA */}
-          <Form onSubmit={handleSubmit}>
+          <Form
+            onSubmit={(e) => {
+              e.preventDefault()
+              submit()
+            }}
+          >
             <FormGroup>
               <label>NOME COMPLETO</label>
-              <input placeholder="Seu nome" />
+              <input
+                placeholder="Seu nome"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+              />
             </FormGroup>
 
             <FormGroup>
               <label>NOME DA HAMBURGUERIA</label>
-              <input placeholder="Sua empresa" />
+              <input
+                placeholder="Sua empresa"
+                value={burgerPlaceName}
+                onChange={(e) => setBurgerPlaceName(e.target.value)}
+              />
             </FormGroup>
 
             <div className="row">
               <FormGroup>
                 <label>WHATSAPP</label>
-                <input placeholder="(00) 00000-0000" />
+                <input
+                  placeholder="(00) 00000-0000"
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value)}
+                  required
+                />
               </FormGroup>
 
               <FormGroup>
                 <label>E-MAIL</label>
-                <input placeholder="seu@email.com" />
+                <input
+                  placeholder="seu@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                />
               </FormGroup>
             </div>
 
             <FormGroup>
               <label>MENSAGEM</label>
-              <textarea placeholder="Como podemos ajudar?" />
+              <textarea
+                placeholder="Como podemos ajudar?"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                required
+              />
             </FormGroup>
 
-            <button type="submit">
+            <button type="submit" disabled={isSubmitting}>
               SOLICITAR CONTATO COMERCIAL
             </button>
           </Form>
