@@ -1,11 +1,12 @@
 "use client";
 
+import Image from 'next/image';
 import { FloatingButton } from './styles'
 
 export default function FloatingWhatsApp({ onClick }) {
   return (
     <FloatingButton onClick={onClick} title="Abrir WhatsApp">
-      <img 
+      <Image 
         src="/images/whatsapp.png" 
         alt="WhatsApp"
         width={64}
