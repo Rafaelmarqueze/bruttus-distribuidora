@@ -9,7 +9,6 @@ import {
   CommitmentImage,
   IconCircle,
 } from "./styles"
-import burger from '../../public/images/burger.jpg' 
 import Image from "next/image"
 
 export default function Commitment() {
@@ -67,7 +66,7 @@ export default function Commitment() {
           </CommitmentContent>
 
           <CommitmentImage>
-            <Image src={burger} width={150} height="alto" alt="hamburguer" />
+            <Image src="/images/burger.png" width={300} height={300} alt="hamburguer" />
           </CommitmentImage>
 
         </CommitmentWrapper>

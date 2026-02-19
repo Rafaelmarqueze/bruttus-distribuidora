@@ -61,6 +61,36 @@ export const ContactInfo = styled.div`
   }
 `
 
+export const InfoLink = styled.a`
+  display: block;
+  margin-bottom: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: 0.3s;
+
+  strong {
+    display: block;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 0.25rem;
+  }
+
+  span {
+    font-size: 1rem;
+    display: block;
+  }
+
+  &:hover {
+    opacity: 0.8;
+    color: #fb2c36;
+
+    strong {
+      opacity: 1;
+    }
+  }
+`
+
 /* FORMULÁRIO */
 export const Form = styled.form`
   background: #161616;
@@ -156,7 +186,7 @@ export const ModalContent = styled.div`
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
 
   h3 {
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 1rem 0;
     font-weight: 900;
     font-size: 1.25rem;
   }
@@ -188,6 +218,33 @@ export const ModalContent = styled.div`
     &:hover {
       opacity: 0.9;
       transform: translateY(-1px);
+    }
+  }
+`
+
+export const ModalForm = styled.form`
+  width: 100%;
+
+  button {
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background: white;
+    color: black;
+    font-weight: 800;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
   }
 `

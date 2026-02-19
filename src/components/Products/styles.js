@@ -46,7 +46,7 @@ export const ProductsGrid = styled.div`
   width: 100%;
   max-width: 1100px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: 3rem;
   margin: 4rem auto 0;
 
@@ -66,13 +66,17 @@ export const ProductCard = styled.div`
   }
 
   .image {
-    height: 260px;
+    height: 460px;
     background-size: cover;
     background-position: center;
   }
 
 .image.molded {
   background-image: url("/images/imagemolded.png");
+}
+
+.image.molded2 {
+  background-image: url("/images/imagemolded2.jpeg");
 }
 
 .image.blends {

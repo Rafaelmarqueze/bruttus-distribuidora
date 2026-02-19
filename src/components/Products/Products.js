@@ -17,7 +17,10 @@ export default function Products() {
 
         <ProductsGrid>
           <ProductCard>
+            <p><span>A CARNE</span></p>
             <div className="image molded" />
+            <p><span>DAS MELHORES</span></p>
+            <div className="image molded2" />
             <div className="content">
               <h3>HAMBÚRGUERES MOLDADOS</h3>
               <p>
