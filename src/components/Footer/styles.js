@@ -15,17 +15,18 @@ export const FooterContent = styled.div`
 
   margin-bottom: ${({ theme }) => theme.spacing.lg};
 
-  .top {
+  .logo-section {
+    margin-bottom: 2rem;
     display: flex;
-    align-items: center;
-    gap: 2rem;
-    margin-bottom: 1rem;
+    justify-content: center;
   }
 
   .socials {
     display: flex;
-    gap: 0.9rem;
+    gap: 1.5rem;
     align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
   }
 
   .socials a {
@@ -74,7 +75,8 @@ export const FooterContent = styled.div`
   }
 
   @media (max-width: 900px) {
-    .top { gap: 1rem; }
+    .logo-section { margin-bottom: 1.5rem; }
+    .socials { gap: 1rem; margin-bottom: 1.5rem; }
     .addresses { grid-template-columns: 1fr; }
   }
 
