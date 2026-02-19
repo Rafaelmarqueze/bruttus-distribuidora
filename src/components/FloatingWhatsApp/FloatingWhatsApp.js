@@ -7,7 +7,7 @@ export default function FloatingWhatsApp({ onClick }) {
   return (
     <FloatingButton onClick={onClick} title="Abrir WhatsApp">
       <Image 
-        src="/images/whatsapp.png" 
+        src="/images/Whatsapp.png" 
         alt="WhatsApp"
         width={64}
         height={64}
