@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
-import { db } from '@/db'; // Importe sua instância do Drizzle
-import { users } from '@/db/schema'; // Importe o schema da sua tabela user
+import bcrypt from 'bcryptjs';
+import { db } from '@/db';
+import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
 export default async function handler(req, res) {
@@ -12,25 +12,20 @@ export default async function handler(req, res) {
   const { username, password } = req.body;
 
   try {
-    // 1. Buscar o usuário no banco usando Drizzle
-    // Buscamos o primeiro registro onde o username seja igual ao enviado
     const user = await db.query.users.findFirst({
       where: eq(users.username, username),
     });
 
-    // 2. Validar existência do usuário
     if (!user) {
       return res.status(401).json({ message: 'Usuário ou senha inválidos' });
     }
 
-    // 3. Comparar a senha enviada com o hash salvo (coluna password no banco)
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
       return res.status(401).json({ message: 'Usuário ou senha inválidos' });
     }
 
-    // 4. Gerar o Token JWT
     const token = jwt.sign(
       { 
         id: user.id, 
@@ -41,7 +36,6 @@ export default async function handler(req, res) {
       { expiresIn: '12h' }
     );
 
-    // 5. Retornar os dados para o frontend
     return res.status(200).json({
       success: true,
       token,
