@@ -25,7 +25,7 @@ export default function Header() {
             <span></span>
           </MobileMenuButton>
 
-          <NavLinks isOpen={isOpen}>
+          <NavLinks $isOpen={isOpen}>
             <li><a href="#sobre">SOBRE</a></li>
             <li><a href="#produtos">PRODUTOS</a></li>
             <li><a href="#qualidade">QUALIDADE</a></li>

@@ -69,6 +69,20 @@ export default class MyDocument extends Document {
               src="https://www.facebook.com/tr?id=1276599831003778&ev=PageView&noscript=1"
             />
           </noscript>
+
+          {/* MercadoPago Bricks */}
+          <Script 
+            src="https://sdk.mercadopago.com/js/v2" 
+            strategy="beforeInteractive"
+            onLoad={() => {
+              console.log("✅ MercadoPago script loaded successfully");
+              window.mercadopagoScriptReady = true;
+            }}
+            onError={() => {
+              console.error("❌ Failed to load MercadoPago script");
+              window.mercadopagoScriptReady = false;
+            }}
+          />
         </Head>
         <body>
           <Main />

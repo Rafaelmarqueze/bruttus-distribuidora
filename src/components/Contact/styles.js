@@ -30,7 +30,7 @@ export const ContactInfo = styled.div`
     margin-bottom: 1.5rem;
 
     span {
-      color: #fb2c36;
+      color: #ffffff;
     }
 
     @media (max-width: 768px) {
@@ -136,7 +136,7 @@ export const FormGroup = styled.div`
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    opacity: 0.6;
+    color: white;
     margin-bottom: 0.4rem;
   }
 
@@ -177,6 +177,11 @@ export const ModalOverlay = styled.div`
 `
 
 export const ModalContent = styled.div`
+
+  h3 {
+    color: white;
+  }
+    
   width: 100%;
   max-width: 520px;
   background: #161616;
@@ -194,6 +199,7 @@ export const ModalContent = styled.div`
   p {
     margin: 0;
     opacity: 0.85;
+    color: white;
   }
 
   .actions {
