@@ -14,7 +14,7 @@ const nextConfig = {
     ],
   },
   /* config options here */
-  reactStrictMode: true,
+  reactStrictMode: false,
 };
 
 

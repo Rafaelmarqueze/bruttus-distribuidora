@@ -37,7 +37,7 @@ export const NavLinks = styled.ul`
     align-items: center;
     padding: 2rem;
     gap: 1.5rem;
-    transform: ${({ isOpen }) => isOpen ? 'translateY(0)' : 'translateY(-150%)'};
+    transform: ${({ $isOpen }) => $isOpen ? 'translateY(0)' : 'translateY(-150%)'};
     transition: transform 0.3s ease;
   }
 

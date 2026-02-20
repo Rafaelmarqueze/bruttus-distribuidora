@@ -1,4 +1,6 @@
 import { Resend } from 'resend'
+import { db } from '@/db'
+import { leads as leadsTable } from '@/db/schema'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -65,8 +67,24 @@ export default async function handler(req, res) {
       return res.status(500).json({ ok: false, error: 'Failed to send email' })
     }
 
+    // Save lead to database
+    try {
+      await db.insert(leadsTable).values({
+        name: trimmed.fullName,
+        email: trimmed.email || null,
+        phone: trimmed.whatsapp,
+        company: trimmed.burgerPlaceName || null,
+        message: trimmed.message,
+        cnpj: null
+      })
+    } catch (leaderror) {
+      console.error('Error saving lead to database:', leaderror)
+      // Continue even if saving lead fails
+    }
+
     return res.status(200).json({ ok: true })
   } catch (err) {
+    console.error('Error sending email:', err)
     return res.status(500).json({ ok: false, error: 'Failed to send email' })
   }
 }
