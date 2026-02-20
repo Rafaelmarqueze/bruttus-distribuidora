@@ -199,6 +199,7 @@ export const ModalContent = styled.div`
   p {
     margin: 0;
     opacity: 0.85;
+    color: white;
   }
 
   .actions {

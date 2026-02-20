@@ -52,6 +52,36 @@ const CloseButton = styled.button`
   }
 `;
 
+const MethodButton = styled.button`
+  padding: 10px 16px;
+  background: ${props => props.active ? "#ff6b35" : "#eee"};
+  color: ${props => props.active ? "white" : "#333"};
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  flex: 1;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+`;
+
+const PixInput = styled.input`
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+
+  &:focus {
+    outline: none;
+    border-color: #ff6b35;
+  }
+`;
+
 export default function MercadoPagoBricks({
     preferenceId,
     total,
@@ -61,24 +91,20 @@ export default function MercadoPagoBricks({
     onSuccess,
     onError,
 }) {
-    const [payerName, setPayerName] = useState("");
-    const [payerCPF, setPayerCPF] = useState("");
-    const [payerEmail, setPayerEmail] = useState("");
+    // payer data will be obtained directly from the Bricks form submission
     const [bricksInstance, setBricksInstance] = useState(null);
     const [initialized, setInitialized] = useState(false);
-    const [method, setMethod] = useState("card"); // 'card' | 'pix'
+    const [method, setMethod] = useState("card"); // Inicia no cartão por padrão
     const [pixData, setPixData] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [cardInitKey, setCardInitKey] = useState(0);
     const [cardInitError, setCardInitError] = useState(null);
     const [paymentInitError, setPaymentInitError] = useState(null);
     const [paymentInitializing, setPaymentInitializing] = useState(false);
     const [paymentInitialized, setPaymentInitialized] = useState(false);
-    // prevent duplicate pix calls
     const [pixRequested, setPixRequested] = useState(false);
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
-        // Inicializa o SDK do MercadoPago e armazena o bricksBuilder
         const init = async () => {
             let attempts = 0;
             const maxAttempts = 20;
@@ -94,17 +120,13 @@ export default function MercadoPagoBricks({
             }
 
             const publicKey = process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY;
-            if (!publicKey) {
-                console.error("Chave pública do MercadoPago não configurada");
-                return;
-            }
+            if (!publicKey) return;
 
             try {
                 const mp = new window.MercadoPago(publicKey);
                 const bricksBuilder = mp.bricks();
                 setBricksInstance(bricksBuilder);
                 setInitialized(true);
-                console.log("✅ MercadoPago inicializado (bricks ready)");
             } catch (err) {
                 console.error("Erro inicializando MercadoPago:", err);
             }
@@ -120,90 +142,52 @@ export default function MercadoPagoBricks({
         };
     }, []);
 
-    // NOTE: do not auto-create the Payment Brick on load — create it only on explicit fallback.
-    // This prevents the preference-based Payment Brick from stealing focus when the user
-    // intends to use the Card Brick. Fallback will be triggered by CardBrickInitializer.
-
     const createPreferencePaymentBrick = async () => {
-        if (!bricksInstance) return;
-        if (!preferenceId) {
-            setPaymentInitError("PreferenceId ausente");
-            return;
-        }
+        if (!bricksInstance || !preferenceId) return;
 
         try {
             setPaymentInitializing(true);
-            // limpar container
             const paymentEl = document.getElementById("payment");
             if (paymentEl) paymentEl.innerHTML = "";
 
-            // create expects a target element id (string) as second arg — provide "payment"
-            await bricksInstance.create(
-                "payment",
-                "payment",
-                {
-                    initialization: {
-                        preferenceId: preferenceId,
-                        amount: (function () {
-                            const n = Number(total || 0);
-                            return Number.isFinite(n) ? Number(n.toFixed(2)) : 0;
-                        })(),
-                        currency: "BRL",
+            await bricksInstance.create("payment", "payment", {
+                initialization: {
+                    preferenceId: preferenceId,
+                    amount: Number(total),
+                },
+                callbacks: {
+                    onReady: () => {
+                        setPaymentInitialized(true);
+                        setPaymentInitializing(false);
                     },
-                    callbacks: {
-                        onReady: () => {
-                            console.log("Payment Brick pronto (fallback)");
-                            setPaymentInitialized(true);
-                            setPaymentInitError(null);
-                            setPaymentInitializing(false);
-                        },
-                        onError: (err) => {
-                            console.error("Erro no Payment Brick (fallback):", err);
-                            // If the Payment Brick failed because no payment type was selected,
-                            // open the MercadoPago redirect checkout as a last-resort fallback.
-                            try {
-                                const cause = err?.cause || err?.type;
-                                const msg = err?.message || "";
-                                if (cause === "payment_brick_initialization_failed" || /No payment type was selected/i.test(msg)) {
-                                    const redirectUrl = `https://www.mercadopago.com/checkout/v1/redirect?pref_id=${preferenceId}`;
-                                    console.warn("Payment Brick cannot initialize — opening redirect URL:", redirectUrl);
-                                    try {
-                                        window.open(redirectUrl, "_blank");
-                                    } catch (e) {
-                                        // ignore
-                                    }
-                                }
-                            } catch (e) {
-                                // ignore
-                            }
-
-                            setPaymentInitError(err?.message || JSON.stringify(err));
-                            setPaymentInitializing(false);
-                        },
+                    onError: (err) => {
+                        console.error("Erro no Payment Brick:", err);
+                        setPaymentInitError(err?.message || "Erro no checkout");
                     },
-                }
-            );
+                },
+            });
         } catch (err) {
-            console.error("Falha ao criar Payment Brick (fallback):", err);
-            setPaymentInitError(err?.message || String(err));
             setPaymentInitializing(false);
         }
     };
 
-    // Helper to generate Pix payment via backend and store result in state
+    const handleCopyPix = () => {
+        if (pixData?.qr_code) {
+            navigator.clipboard.writeText(pixData.qr_code);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
+    };
+
     const generatePix = async () => {
-        if (pixRequested) return;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(payerEmail)) {
+            onError("Por favor, informe um e-mail válido.");
+            return;
+        }
 
         try {
-            setPixRequested(true);
             setLoading(true);
-            setPixData(null);
-
-            if (!payerEmail || !payerEmail.includes("@")) {
-                onError("Informe um email válido para pagamento via Pix");
-                return;
-            }
-
             const res = await fetch("/api/checkout-pix", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -211,27 +195,21 @@ export default function MercadoPagoBricks({
                     cnpj,
                     items: cart || [],
                     total,
-                    payer: {
-                        email: "customer@example.com",
-                        name: "",
-                        cpf: "12345678909",
-                    },
+                    email: payerEmail, // Enviando o email capturado no input
                 }),
             });
 
             const data = await res.json();
             if (!res.ok) {
-                console.error("Erro criando Pix:", data);
-                onError(data.error || "Erro ao criar pagamento Pix");
-                setLoading(false);
+                onError(data.error || "Erro ao criar Pix");
                 return;
             }
 
             setPixData(data);
-            setLoading(false);
+            setPixRequested(true);
         } catch (err) {
-            console.error("Erro no checkout-pix:", err);
-            onError(err.message || "Erro ao criar Pix");
+            onError("Erro ao gerar Pix");
+        } finally {
             setLoading(false);
         }
     };
@@ -240,116 +218,101 @@ export default function MercadoPagoBricks({
         <BricksContainer onClick={onClose}>
             <BricksContent onClick={(e) => e.stopPropagation()}>
                 <CloseButton onClick={onClose}>×</CloseButton>
-                <h2>Formas de Pagamento</h2>
-                <div id="bricksAmount">Total: R$ {Number(total || 0).toFixed(2)}</div>
-                <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-                    <button
-                        onClick={() => setMethod("card")}
-                        style={{
-                            padding: "8px 12px",
-                            background: method === "card" ? "#0070f3" : "#eee",
-                            color: method === "card" ? "white" : "#333",
-                            border: "none",
-                            borderRadius: 6,
-                            cursor: "pointer",
-                        }}
-                    >
-                        Cartão
-                    </button>
-                    <button
-                        onClick={() => setMethod("pix")}
-                        style={{
-                            padding: "8px 12px",
-                            background: method === "pix" ? "#0070f3" : "#eee",
-                            color: method === "pix" ? "white" : "#333",
-                            border: "none",
-                            borderRadius: 6,
-                            cursor: "pointer",
-                        }}
-                    >
-                        Pix
-                    </button>
+                <h2>Finalizar Pedido</h2>
+                <div id="bricksAmount">Total a pagar: <strong>R$ {Number(total || 0).toFixed(2)}</strong></div>
+
+                <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+                    <MethodButton active={method === "card"} onClick={() => setMethod("card")}>Cartão</MethodButton>
+                    <MethodButton active={method === "pix"} onClick={() => setMethod("pix")}>Pix</MethodButton>
                 </div>
 
                 {method === "card" && (
                     <div>
+                        {/* card brick itself already includes fields for payer info */}
                         <div id="payment" />
                         <div id="cardPaymentContainer" />
-                        {!initialized && (
-                            <div style={{ color: "#999", marginTop: 10 }}>Aguardando SDK do MercadoPago...</div>
-                        )}
-                        {paymentInitializing && <div>Iniciando modal de pagamento...</div>}
-                        {paymentInitError && <div style={{ color: "#b00020" }}>{paymentInitError}</div>}
-                        {paymentInitialized && <div style={{ color: "#0a0" }}>Modal pronto</div>}
+                        {!initialized && <div style={{ color: "#999" }}>Carregando Mercado Pago...</div>}
 
-                        {/* Mount Card brick initializer to attempt secure fields card flow. */}
                         {initialized && (
                             <CardBrickInitializer
                                 bricksBuilder={bricksInstance}
                                 total={total}
                                 cnpj={cnpj}
                                 cart={cart}
-                                payer={{ name: payerName, email: payerEmail, identification: { type: "CPF", number: payerCPF } }}
                                 onSuccess={onSuccess}
                                 onError={onError}
                                 onInitError={(msg) => setCardInitError(msg)}
                                 onFallback={createPreferencePaymentBrick}
                             />
                         )}
-                        {cardInitError && <div style={{ color: "#b00020" }}>{cardInitError}</div>}
+                        {cardInitError && <div style={{ color: "red", marginTop: 10 }}>{cardInitError}</div>}
                     </div>
                 )}
 
                 {method === "pix" && (
                     <div id="pixContainer">
-                        {loading && <div>Carregando opção Pix...</div>}
-
-                        {!loading && pixData && (
+                        {!pixData ? (
+                            <div>
+                                <label style={{ fontSize: '14px', display: 'block', marginBottom: '8px' }}>E-mail para receber o comprovante:</label>
+                                <PixInput
+                                    type="email"
+                                    placeholder="seu@email.com"
+                                    value={payerEmail}
+                                    onChange={(e) => setPayerEmail(e.target.value)}
+                                />
+                                <button
+                                    onClick={generatePix}
+                                    disabled={loading}
+                                    style={{
+                                        width: "100%",
+                                        padding: "12px",
+                                        background: "#ff6b35",
+                                        color: "white",
+                                        border: "none",
+                                        borderRadius: "8px",
+                                        fontWeight: "bold",
+                                        cursor: loading ? "not-allowed" : "pointer"
+                                    }}
+                                >
+                                    {loading ? "Gerando..." : "Gerar QR Code Pix"}
+                                </button>
+                            </div>
+                        ) : (
                             <div style={{ textAlign: "center" }}>
-                                <div style={{ marginBottom: 10, fontWeight: 600 }}>Instruções de pagamento (Pix)</div>
-                                {pixData.qr_code_base64 ? (
+                                <div style={{ marginBottom: 15, fontWeight: "bold" }}>Escaneie o QR Code:</div>
+                                {pixData.qr_code_base64 && (
                                     <img
                                         alt="QR Code Pix"
                                         src={`data:image/png;base64,${pixData.qr_code_base64}`}
-                                        style={{ maxWidth: "250px", marginBottom: 12 }}
+                                        style={{ maxWidth: "200px", display: "block", margin: "0 auto 15px" }}
                                     />
-                                ) : null}
-
-                                {pixData.qr_code && (
-                                    <div style={{ marginBottom: 8 }}>
-                                        <label>Chave / Código Pix (copiar):</label>
-                                        <input
-                                            readOnly
-                                            value={pixData.qr_code}
-                                            style={{ width: "100%", marginTop: 6 }}
-                                            onFocus={(e) => e.target.select()}
-                                        />
-                                    </div>
                                 )}
-
-                                {pixData.ticket_url && (
-                                    <div style={{ marginTop: 8 }}>
-                                        <a href={pixData.ticket_url} target="_blank" rel="noreferrer">
-                                            Abrir instruções completas de pagamento
-                                        </a>
-                                    </div>
-                                )}
-
-                                <div style={{ marginTop: 12, color: "#444", fontSize: 14 }}>
-                                    Copie o código ou escaneie o QR com o aplicativo do seu banco para finalizar o pagamento.
+                                <div style={{ marginBottom: 10 }}>
+                                    <label style={{ fontSize: "12px", color: "#666" }}>Código Pix (Copia e Cola):</label>
+                                    <input
+                                        readOnly
+                                        value={pixData.qr_code}
+                                        style={{ width: "100%", padding: "8px", marginTop: "5px", fontSize: "12px" }}
+                                        onClick={(e) => e.target.select()}
+                                    />
                                 </div>
-                            </div>
-                        )}
-
-                        {!loading && !pixData && (
-                            <div>
-                                <div style={{ marginBottom: 8 }}>Gerar pagamento via Pix</div>
                                 <button
-                                    onClick={generatePix}
-                                    style={{ padding: "10px 14px", borderRadius: 6, cursor: "pointer" }}
+                                    onClick={handleCopyPix}
+                                    style={{
+                                        background: copied ? "#4caf50" : "#0070f3",
+                                        color: "white",
+                                        border: "none",
+                                        padding: "10px",
+                                        borderRadius: "6px",
+                                        width: "100%",
+                                        cursor: "pointer"
+                                    }}
                                 >
-                                    Gerar Pix
+                                    {copied ? "✓ Copiado!" : "Copiar Código Pix"}
                                 </button>
+                                <p style={{ fontSize: '12px', color: '#666', marginTop: '15px' }}>
+                                    Após o pagamento, o sistema processará seu pedido automaticamente.
+                                </p>
                             </div>
                         )}
                     </div>
@@ -359,8 +322,7 @@ export default function MercadoPagoBricks({
     );
 }
 
-// Componente auxiliar para inicializar Card Payment Brick
-function CardBrickInitializer({ bricksBuilder, total, cnpj, cart, payer, onSuccess, onError, onInitError, onFallback }) {
+function CardBrickInitializer({ bricksBuilder, total, cnpj, cart, onSuccess, onError, onInitError, onFallback }) {
     useEffect(() => {
         if (!bricksBuilder) return;
 
@@ -406,10 +368,21 @@ function CardBrickInitializer({ bricksBuilder, total, cnpj, cart, payer, onSucce
                                 console.log("Card submit:", formData, additionalData);
                                 try {
                                     // First: create payment server-side with MercadoPago using tokenized card data
+                                    // derive payer details from submitted fields
+                                    const payerDetails = {};
+                                    if (formData?.payer) {
+                                        if (formData.payer.email) payerDetails.email = formData.payer.email;
+                                        if (formData.payer.first_name) payerDetails.name = formData.payer.first_name;
+                                    }
+                                    // cardholder section also sometimes contains name/email
+                                    if (formData?.cardholder) {
+                                        if (formData.cardholder.email) payerDetails.email = payerDetails.email || formData.cardholder.email;
+                                        if (formData.cardholder.name) payerDetails.name = payerDetails.name || formData.cardholder.name;
+                                    }
                                     const payResp = await fetch("/api/checkout-card-payment", {
                                         method: "POST",
                                         headers: { "Content-Type": "application/json" },
-                                        body: JSON.stringify({ cnpj, items: cart || [], total, formData, additionalData, payer }),
+                                        body: JSON.stringify({ cnpj, items: cart || [], total, formData, additionalData, payer: payerDetails }),
                                     });
 
                                     const payData = await payResp.json();
@@ -514,7 +487,7 @@ function CardBrickInitializer({ bricksBuilder, total, cnpj, cart, payer, onSucce
                 // ignore
             }
         };
-    }, [bricksBuilder, total, cnpj, cart, payer, onSuccess, onError]);
+    }, [bricksBuilder, total, cnpj, cart, onSuccess, onError]);
 
     return null;
 }

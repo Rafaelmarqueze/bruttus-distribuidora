@@ -15,12 +15,12 @@ export default async function handler(req, res) {
     // Usar Payments API para criar pagamento Pix (retorna point_of_interaction com QR)
     // Payments API for PIX expects a payer object with at least an email in many cases.
     // Provide a sensible default when caller didn't include payer.
-    const defaultPayer = { email: `no-reply+${Date.now()}@bruttus.local` };
+    const defaultPayer = { email: `no-reply@bruttusburg.com.br` };
 
     const body = {
       transaction_amount: Number(total),
       payment_method_id: "pix",
-      description: `Compra - ${cnpj}`,
+      description: `Compra Blend de carne - ${cnpj}`,
       external_reference: cnpj,
       payer: req.body.payer || defaultPayer,
     };

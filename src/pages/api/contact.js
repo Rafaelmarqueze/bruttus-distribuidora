@@ -13,7 +13,8 @@ export default async function handler(req, res) {
     burgerPlaceName = '',
     whatsapp = '',
     email = '',
-    message = ''
+    message = '',
+    cnpj = ''
   } = req.body ?? {}
 
   const trimmed = {
@@ -21,7 +22,8 @@ export default async function handler(req, res) {
     burgerPlaceName: String(burgerPlaceName).trim(),
     whatsapp: String(whatsapp).trim(),
     email: String(email).trim(),
-    message: String(message).trim()
+    message: String(message).trim(),
+    cnpj: String(cnpj).trim()
   }
 
   if (!trimmed.fullName || !trimmed.whatsapp || !trimmed.message) {
@@ -75,7 +77,7 @@ export default async function handler(req, res) {
         phone: trimmed.whatsapp,
         company: trimmed.burgerPlaceName || null,
         message: trimmed.message,
-        cnpj: null
+        cnpj: trimmed.cnpj || null
       })
     } catch (leaderror) {
       console.error('Error saving lead to database:', leaderror)

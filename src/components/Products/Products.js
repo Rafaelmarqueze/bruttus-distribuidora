@@ -1,7 +1,24 @@
 "use client";
+import { useState, useEffect } from 'react';
 import { ProductsSection, ProductsGrid, ProductCard } from './styles';
 
 export default function Products() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        setProducts(Array.isArray(data) ? data : []);
+      } catch (e) {
+        console.error('Erro ao carregar produtos homepage:', e);
+        setProducts([]);
+      }
+    };
+    load();
+  }, []);
+
   return (
     <ProductsSection id="produtos">
       <div className="container">
@@ -16,31 +33,15 @@ export default function Products() {
         </p>
 
         <ProductsGrid>
-          <ProductCard>
-            <p><span>A CARNE</span></p>
-            <div className="image molded" />
-            <p><span>DAS MELHORES</span></p>
-            <div className="image molded2" />
-            <div className="content">
-              <h3>HAMBÚRGUERES MOLDADOS</h3>
-              <p>
-                A escolha ideal para quem busca agilidade e padronização. Com peso
-                e formato uniformes, garantem preparo rápido e consistente,
-                preservando textura e sabor artesanal.
-              </p>
-            </div>
-          </ProductCard>
-
-          <ProductCard>
-            <div className="image blends" />
-            <div className="content">
-              <h3>BLENDS RESFRIADOS</h3>
-              <p>
-                Para mestres hamburgueiros que amam controle total. Embalados a
-                vácuo em pacotes de 3kg, preservam frescor, cor e sabor original.
-              </p>
-            </div>
-          </ProductCard>
+          {products.map((prod) => (
+            <ProductCard key={prod.id}>
+              {prod.imageUrl && <div className="image" style={{backgroundImage: `url(${prod.imageUrl})`}} />}
+              <div className="content">
+                <h3>{prod.name}</h3>
+                <p>{prod.description}</p>
+              </div>
+            </ProductCard>
+          ))}
         </ProductsGrid>
       </div>
     </ProductsSection>

@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido' });
 
-  const { cnpj, items, total, formData, additionalData } = req.body;
+  const { cnpj, items, total, formData, additionalData, payer } = req.body;
   if (!cnpj || !items || items.length === 0 || total === undefined) {
     return res.status(400).json({ error: 'Dados inválidos para pagamento com cartão' });
   }
@@ -17,6 +17,16 @@ export default async function handler(req, res) {
       payer: { email: 'customer@example.com' },
       installments: Number(additionalData?.installments || 1),
     };
+
+    // override payer details if provided
+    if (payer && typeof payer === 'object') {
+      payload.payer = payload.payer || {};
+      if (payer.email) payload.payer.email = payer.email;
+      if (payer.name) {
+        // MercadoPago expects first_name/last_name; we'll put full name in first_name
+        payload.payer.first_name = payer.name;
+      }
+    }
 
     // Prefer token field if provided by Bricks
     if (formData?.token || formData?.cardToken) {

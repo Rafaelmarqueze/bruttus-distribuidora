@@ -241,7 +241,8 @@ export default function AdminLeads() {
   const [purchaseLink, setPurchaseLink] = useState("");
   const [loading, setLoading] = useState(true);
   const [showNewLeadForm, setShowNewLeadForm] = useState(false);
-  const [newLead, setNewLead] = useState({ name: "", email: "", phone: "" });
+  const [newLead, setNewLead] = useState({ name: "", email: "", phone: "", cnpj: "" });
+  const statuses = ["novo", "contatado", "convertido", "perdido"];
 
   useEffect(() => {
     fetchLeads();
@@ -251,9 +252,15 @@ export default function AdminLeads() {
     try {
       const response = await fetch("/api/leads");
       const data = await response.json();
-      setLeads(data || []);
+      if (Array.isArray(data)) {
+        setLeads(data);
+      } else {
+        console.warn("API returned non-array for leads, resetting to empty", data);
+        setLeads([]);
+      }
     } catch (error) {
       console.error("Erro ao carregar leads:", error);
+      setLeads([]);
     } finally {
       setLoading(false);
     }
@@ -302,6 +309,17 @@ export default function AdminLeads() {
             l.id === selectedLead.id ? { ...l, cnpj: cleanCNPJ } : l
           );
           setLeads(updated);
+
+          // persist to backend as well
+          try {
+            await fetch(`/api/leads?id=${selectedLead.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ cnpj: cleanCNPJ }),
+            });
+          } catch (err) {
+            console.error("Erro ao salvar CNPJ no lead:", err);
+          }
         }
       } else {
         alert("Erro ao gerar link de compra");
@@ -326,12 +344,13 @@ export default function AdminLeads() {
     }
 
     try {
+      const cleanCNPJ = newLead.cnpj ? newLead.cnpj.replace(/[^\d]/g, "") : "";
       const response = await fetch("/api/leads", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newLead),
+        body: JSON.stringify({ ...newLead, status: "novo", cnpj: cleanCNPJ }),
       });
 
       if (response.ok) {
@@ -351,6 +370,24 @@ export default function AdminLeads() {
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("pt-BR");
+  };
+
+  const updateLeadStatus = async (id, newStatus) => {
+    try {
+      const response = await fetch(`/api/leads?id=${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (response.ok) {
+        const updated = await response.json();
+        setLeads((prev) => prev.map((l) => (l.id === id ? updated : l)));
+      } else {
+        console.error("Falha ao atualizar status do lead");
+      }
+    } catch (err) {
+      console.error("Erro ao atualizar status:", err);
+    }
   };
 
   if (loading) {
@@ -401,6 +438,15 @@ export default function AdminLeads() {
                   onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })}
                 />
               </CreateLeadLabel>
+              <CreateLeadLabel>
+                CNPJ
+                <input
+                  type="text"
+                  placeholder="00.000.000/0000-00"
+                  value={newLead.cnpj}
+                  onChange={(e) => setNewLead({ ...newLead, cnpj: e.target.value })}
+                />
+              </CreateLeadLabel>
               <CreateLeadButton type="submit">Criar Lead</CreateLeadButton>
             </CreateLeadForm>
           </CreateLeadContainer>
@@ -414,17 +460,39 @@ export default function AdminLeads() {
               <tr>
                 <th>Nome</th>
                 <th>Email</th>
+                <th>Telefone</th>
                 <th>CNPJ</th>
+                <th>Status</th>
                 <th>Data</th>
                 <th>Ações</th>
               </tr>
             </thead>
             <tbody>
-              {leads.map((lead) => (
+              {(Array.isArray(leads) ? leads : []).map((lead) => (
                 <tr key={lead.id}>
                   <td>{lead.name}</td>
                   <td>{lead.email}</td>
+                  <td>{lead.phone || "-"}</td>
                   <td>{lead.cnpj || "-"}</td>
+                  <td>
+                    <select
+                      value={lead.status || "novo"}
+                      onChange={(e) => updateLeadStatus(lead.id, e.target.value)}
+                      style={{
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        border: '1px solid #ccc',
+                        background: '#fff',
+                        fontSize: '14px'
+                      }}
+                    >
+                      {statuses.map((s) => (
+                        <option key={s} value={s}>
+                          {s.charAt(0).toUpperCase() + s.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
                   <td>{formatDate(lead.createdAt)}</td>
                   <td>
                     <ActionButtons>

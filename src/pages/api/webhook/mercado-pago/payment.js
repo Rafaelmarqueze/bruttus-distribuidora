@@ -61,6 +61,17 @@ export default async function handler(req, res) {
 
             console.log("Payment details from MercadoPago:", paymentData);
 
+            function mapPaymentMethod(pd) {
+              if (!pd) return null;
+              const type = pd.payment_type_id || pd.paymentType || (pd.payment && pd.payment.type) || null;
+              const installments = Number(pd.installments || 0) || 0;
+              if (type === 'pix') return 'pix';
+              if (installments && installments > 1) return 'parcelado';
+              if (type === 'credit_card' || pd.card) return 'cartao';
+              // fallback for transfers or unknown => a vista
+              return 'avista';
+            }
+
             if (paymentData && paymentData.status === "approved") {
               // Determine cnpj from external_reference (if present)
               const cnpj = paymentData.external_reference || paymentData.order?.external_reference || null;
@@ -77,6 +88,7 @@ export default async function handler(req, res) {
                     total: Number(paymentData.transaction_amount) || 0,
                     status: "approved",
                     mercadopagoId: String(paymentData.id),
+                    paymentMethod: mapPaymentMethod(paymentData),
                   })
                   .returning();
 

@@ -50,6 +50,85 @@ const GlobalStyles = createGlobalStyle`
       padding: 0 1.5rem;
     }
   }
+
+  /* Container principal que ocupa a tela toda */
+.agradecimento-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #520109; /* Sua cor personalizada */
+  color: white;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Título Darius */
+.brand-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+/* Container da Imagem para controlar o tamanho */
+.logo-wrapper {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin-bottom: 2rem;
+}
+
+/* Bloco de textos */
+.text-content {
+  max-width: 500px;
+  margin-bottom: 2.5rem;
+}
+
+.text-content h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+}
+
+.text-content p {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Botão Estilo WhatsApp */
+.btn-whatsapp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background-color: #25D366; /* Verde WhatsApp */
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 18px 40px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  transition: transform 0.2s, background-color 0.2s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-whatsapp:hover {
+  transform: scale(1.02);
+  background-color: #20ba5a;
+}
+
+/* Rodapé */
+.footer-text {
+  margin-top: 2rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+}
 `
 
 export default GlobalStyles

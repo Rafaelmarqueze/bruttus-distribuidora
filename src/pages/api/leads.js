@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "POST") {
-      const { name, email, phone, company, message } = req.body;
+      const { cnpj, name, email, phone, company, message, status } = req.body;
 
       if (!name || !email) {
         return res.status(400).json({ error: "Nome e email são obrigatórios" });
@@ -24,7 +24,8 @@ export default async function handler(req, res) {
           phone: phone || null,
           company: company || null,
           message: message || null,
-          cnpj: null,
+          cnpj: cnpj || null,
+          status: status || 'novo'
         })
         .returning();
 
@@ -33,15 +34,19 @@ export default async function handler(req, res) {
 
     if (req.method === "PUT") {
       const { id } = req.query;
-      const { cnpj } = req.body;
+      const { cnpj, status } = req.body;
 
       if (!id) {
         return res.status(400).json({ error: "ID é obrigatório" });
       }
 
+      const updateData = {};
+      if (cnpj !== undefined) updateData.cnpj = cnpj;
+      if (status !== undefined) updateData.status = status;
+
       const updatedLead = await db
         .update(leadsTable)
-        .set({ cnpj })
+        .set(updateData)
         .where(eq(leadsTable.id, parseInt(id)))
         .returning();
 

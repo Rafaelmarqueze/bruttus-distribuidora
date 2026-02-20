@@ -3,9 +3,9 @@ import styled from "styled-components";
 
 const PurchaseHeroSection = styled.section`
   background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)),
-    url("/images/burger.png") center/cover no-repeat;
+    url("/images/blendbg.jpeg") center/cover no-repeat;
   background-attachment: fixed;
-  min-height: 500px;
+  min-height: 700px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,6 +18,8 @@ const PurchaseHeroSection = styled.section`
 const PurchaseHeroContent = styled.div`
   max-width: 800px;
   z-index: 2;
+  margin-right: 500px;
+  text-align: left;
 
   h1 {
     font-size: 3.5rem;
@@ -46,17 +48,6 @@ const PurchaseHeroContent = styled.div`
       font-size: 1rem;
     }
   }
-
-  .quality-badge {
-    display: inline-block;
-    background: rgba(255, 107, 53, 0.9);
-    padding: 15px 30px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    margin-top: 20px;
-    backdrop-filter: blur(10px);
-  }
 `;
 
 export default function PurchaseHero() {
@@ -67,12 +58,9 @@ export default function PurchaseHero() {
           NOSSA <span>QUALIDADE</span>
         </h1>
         <p>
-          Carnes selecionadas, inspeção rigorosa (SISP/SISBI) e processos que
+          Carnes selecionadas, inspeção rigorosa e processos que
           garantem sabor, segurança e frescor em cada entrega.
         </p>
-        <div className="quality-badge">
-          ✓ Inspectado e Certificado | ✓ Entrega Rápida
-        </div>
       </PurchaseHeroContent>
     </PurchaseHeroSection>
   );

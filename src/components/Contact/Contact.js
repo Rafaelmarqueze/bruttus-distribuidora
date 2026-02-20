@@ -1,5 +1,5 @@
 "use client";
-
+import { useRouter } from 'next/navigation';
 import { useState } from 'react'
 
 import {
@@ -14,19 +14,24 @@ import {
   ModalForm
 } from './styles'
 
-export default function Contact({ openModal = false, onCloseModal = () => {} }) {
+export default function Contact({ openModal = false, onCloseModal = () => { } }) {
+  const router = useRouter();
   const [fullName, setFullName] = useState('')
   const [burgerPlaceName, setBurgerPlaceName] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
   const [email, setEmail] = useState('')
+  const [cnpj, setCnpj] = useState('')
   const [message, setMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [modal, setModal] = useState({ open: false, title: '', text: '' })
 
   const handleCloseAllModals = () => {
-    setModal({ open: false, title: '', text: '' })
-    onCloseModal()
-  }
+    if (modal.title === 'Sucesso') {
+      router.push('/agradecimento'); // Redireciona se foi sucesso
+    }
+    setModal({ open: false, title: '', text: '' });
+    onCloseModal();
+  };
 
   const submit = async () => {
     if (isSubmitting) return
@@ -38,6 +43,7 @@ export default function Contact({ openModal = false, onCloseModal = () => {} }) 
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          cnpj: cnpj.trim().replace(/[^\d]/g, ""),
           fullName,
           burgerPlaceName,
           whatsapp,
@@ -50,6 +56,7 @@ export default function Contact({ openModal = false, onCloseModal = () => {} }) 
         throw new Error('Failed')
       }
 
+      setCnpj('')
       setFullName('')
       setBurgerPlaceName('')
       setWhatsapp('')
@@ -114,6 +121,15 @@ export default function Contact({ openModal = false, onCloseModal = () => {} }) 
               onSubmit={handleSubmitFromModal}
             >
               <FormGroup>
+                <label>CNPJ</label>
+                <input
+                  placeholder="00.000.000/0000-00"
+                  value={cnpj}
+                  onChange={(e) => setCnpj(e.target.value)}
+                  required
+                />
+              </FormGroup>
+              <FormGroup>
                 <label>NOME COMPLETO</label>
                 <input
                   placeholder="Seu nome"
@@ -173,7 +189,7 @@ export default function Contact({ openModal = false, onCloseModal = () => {} }) 
       <ContactSection id="contato">
         <div className="container">
           <ContactGrid>
-            
+
             {/* COLUNA ESQUERDA */}
             <ContactInfo>
               <h2>
@@ -203,6 +219,16 @@ export default function Contact({ openModal = false, onCloseModal = () => {} }) 
                 submit()
               }}
             >
+              <FormGroup>
+                <label>CNPJ</label>
+                <input
+                  placeholder="00.000.000/0000-00"
+                  value={cnpj}
+                  onChange={(e) => setCnpj(e.target.value)}
+                  required
+                />
+              </FormGroup>
+
               <FormGroup>
                 <label>NOME COMPLETO</label>
                 <input

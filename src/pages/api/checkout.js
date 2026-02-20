@@ -47,6 +47,16 @@ export default async function handler(req, res) {
     const paymentInfo = req.body.payment || null;
     const paymentStatus = paymentInfo?.status || "pending";
 
+    function mapPaymentInfo(pi) {
+      if (!pi) return null;
+      if (pi.method) return pi.method; // allow explicit method from client
+      const installments = Number(pi.installments || 0) || 0;
+      if (pi.type === 'pix' || pi.payment_type_id === 'pix') return 'pix';
+      if (installments && installments > 1) return 'parcelado';
+      if (pi.type === 'credit_card' || pi.payment_method_id || pi.card) return 'cartao';
+      return 'avista';
+    }
+
     // Save purchase record with status reflecting payment
     const purchaseResult = await db
       .insert(purchases)
@@ -56,6 +66,7 @@ export default async function handler(req, res) {
         total: parseFloat(total),
         status: paymentStatus,
         mercadopagoId: paymentInfo?.id || null,
+        paymentMethod: mapPaymentInfo(paymentInfo),
       })
       .returning();
 
@@ -90,8 +101,15 @@ export default async function handler(req, res) {
         .limit(1);
 
       if (lead.length > 0) {
-        // Lead exists, just update timestamp or mark as customer
-        // (optional, depending on your business logic)
+        // Lead exists, update status to convertido and optionally keep other fields
+        try {
+          await db
+            .update(leadsTable)
+            .set({ status: 'convertido' })
+            .where(eq(leadsTable.id, lead[0].id));
+        } catch (e) {
+          console.error('Error updating lead status after purchase:', e);
+        }
       }
     } catch (leadError) {
       console.error("Error updating lead:", leadError);

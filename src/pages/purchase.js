@@ -71,7 +71,8 @@ const ProductCard = styled.div`
 const ProductImage = styled.div`
   width: 100%;
   height: 200px;
-  background: linear-gradient(135deg, #ff6b35 0%, #ff8a55 100%);
+  background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2)),
+    url(${props => props.$bgImage}) center/cover no-repeat;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -212,53 +213,27 @@ export default function Purchase() {
   const [quantity, setQuantity] = useState({});
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
-  const BURGER_SIZES = [
-    {
-      label: "100g",
-      description: "90 unidades por caixa",
-      value: "100g",
-      price: 150.0,
-      emoji: "🥩",
-    },
-    {
-      label: "120g",
-      description: "90 unidades por caixa",
-      value: "120g",
-      price: 170.0,
-      emoji: "🥩",
-    },
-    {
-      label: "150g",
-      description: "90 unidades por caixa",
-      value: "150g",
-      price: 200.0,
-      emoji: "🥩",
-    },
-    {
-      label: "180g",
-      description: "90 unidades por caixa",
-      value: "180g",
-      price: 230.0,
-      emoji: "🥩",
-    },
-    {
-      label: "200g",
-      description: "90 unidades por caixa",
-      value: "200g",
-      price: 250.0,
-      emoji: "🥩",
-    },
-    {
-      label: "Saco 3Kg",
-      description: "Embalagem econômica",
-      value: "3kg",
-      price: 120.0,
-      emoji: "💼",
-    },
-  ];
+  const [productsList, setProductsList] = useState([]);
 
-  const handleAddToCart = (size) => {
-    const qty = parseInt(quantity[size.value] || 1);
+  useEffect(() => {
+    // fetch products from API for purchase
+    const loadProducts = async () => {
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        setProductsList(Array.isArray(data) ? data : []);
+      } catch (e) {
+        console.error('Erro carregando produtos:', e);
+        setProductsList([]);
+      }
+    };
+    loadProducts();
+  }, []);
+
+  const BURGER_SIZES = productsList;
+
+  const handleAddToCart = (prod) => {
+    const qty = parseInt(quantity[prod.id] || 1);
 
     if (qty < 1) {
       setError("Quantidade deve ser maior que 0");
@@ -266,17 +241,16 @@ export default function Purchase() {
     }
 
     const item = {
-      id: `${size.value}-${Date.now()}`,
-      name: `Burger - ${size.label}`,
-      size: size.value,
+      id: `${prod.id}-${Date.now()}`,
+      name: prod.name,
       quantity: qty,
-      price: size.price,
-      subtotal: size.price * qty,
+      price: prod.price,
+      subtotal: prod.price * qty,
     };
 
     setCart([...cart, item]);
     setError("");
-    setQuantity({ ...quantity, [size.value]: "" });
+    setQuantity({ ...quantity, [prod.id]: "" });
   };
 
   const handleWhatsAppClick = () => {
@@ -337,30 +311,36 @@ export default function Purchase() {
 
             <ProductsWrapper>
               <ProductGrid>
-                {BURGER_SIZES.map((size) => (
-                  <ProductCard key={size.value}>
-                    <ProductImage>{size.emoji}</ProductImage>
-                    <ProductName>{size.label}</ProductName>
-                    <ProductDescription>{size.description}</ProductDescription>
-                    <PriceTag>R$ {size.price.toFixed(2)}</PriceTag>
+                {BURGER_SIZES.length === 0 && <p>Não há produtos disponíveis no momento.</p>}
+                {BURGER_SIZES.map((prod) => (
+                  <ProductCard key={prod.id || prod.name}>
+                    <ProductImage $bgImage={prod.imageUrl || "/images/blend.png"} />
+                    <ProductName>{prod.name}</ProductName>
+                    <ProductDescription>{prod.description || ""}</ProductDescription>
+                    <PriceTag>R$ {Number(prod.price).toFixed(2)}</PriceTag>
 
                     <QuantityContainer>
                       <QuantityLabel>Qtd:</QuantityLabel>
                       <QuantityInput
                         type="number"
                         min="1"
-                        value={quantity[size.value] || ""}
+                        value={quantity[prod.id] || ""}
                         onChange={(e) =>
                           setQuantity({
                             ...quantity,
-                            [size.value]: e.target.value,
+                            [prod.id]: e.target.value,
                           })
                         }
                         placeholder="1"
                       />
                     </QuantityContainer>
 
-                    <AddButton onClick={() => handleAddToCart(size)}>
+                    <AddButton onClick={() => handleAddToCart({
+                      id: prod.id,
+                      name: prod.name,
+                      price: Number(prod.price),
+                      description: prod.description,
+                    })}>
                       Adicionar ao Carrinho
                     </AddButton>
                   </ProductCard>
