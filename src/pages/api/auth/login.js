@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { db } from '@/db'; // Importe sua instância do Drizzle
 import { users } from '@/db/schema'; // Importe o schema da sua tabela user
 import { eq } from 'drizzle-orm';
