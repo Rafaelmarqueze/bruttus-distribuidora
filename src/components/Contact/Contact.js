@@ -25,6 +25,19 @@ export default function Contact({ openModal = false, onCloseModal = () => { } })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [modal, setModal] = useState({ open: false, title: '', text: '' })
 
+  const formatWhatsApp = (value) => {
+    if (!value) return "";
+
+    // Mantém apenas números
+    const nums = value.replace(/\D/g, "");
+
+    // Formatação: (XX) XXXXX-XXXX
+    if (nums.length <= 2) return nums;
+    if (nums.length <= 7) return `(${nums.slice(0, 2)}) ${nums.slice(2)}`;
+
+    return `(${nums.slice(0, 2)}) ${nums.slice(2, 7)}-${nums.slice(7, 11)}`;
+  };
+
   const handleCloseAllModals = () => {
     if (modal.title === 'Sucesso') {
       router.push('/agradecimento'); // Redireciona se foi sucesso
@@ -43,10 +56,9 @@ export default function Contact({ openModal = false, onCloseModal = () => { } })
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          cnpj: cnpj.trim().replace(/[^\d]/g, ""),
           fullName,
           burgerPlaceName,
-          whatsapp,
+          whatsapp: whatsapp.replace(/\D/g, ''),
           email,
           message
         })
@@ -121,15 +133,6 @@ export default function Contact({ openModal = false, onCloseModal = () => { } })
               onSubmit={handleSubmitFromModal}
             >
               <FormGroup>
-                <label>CNPJ</label>
-                <input
-                  placeholder="00.000.000/0000-00"
-                  value={cnpj}
-                  onChange={(e) => setCnpj(e.target.value)}
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
                 <label>NOME COMPLETO</label>
                 <input
                   placeholder="Seu nome"
@@ -147,14 +150,15 @@ export default function Contact({ openModal = false, onCloseModal = () => { } })
                   onChange={(e) => setBurgerPlaceName(e.target.value)}
                 />
               </FormGroup>
-
               <FormGroup>
                 <label>WHATSAPP</label>
                 <input
                   placeholder="(00) 00000-0000"
                   value={whatsapp}
-                  onChange={(e) => setWhatsapp(e.target.value)}
+                  // Aqui está o segredo: formata o valor antes de salvar no setWhatsapp
+                  onChange={(e) => setWhatsapp(formatWhatsApp(e.target.value))}
                   required
+                  maxLength={15}
                 />
               </FormGroup>
 
@@ -220,16 +224,6 @@ export default function Contact({ openModal = false, onCloseModal = () => { } })
               }}
             >
               <FormGroup>
-                <label>CNPJ</label>
-                <input
-                  placeholder="00.000.000/0000-00"
-                  value={cnpj}
-                  onChange={(e) => setCnpj(e.target.value)}
-                  required
-                />
-              </FormGroup>
-
-              <FormGroup>
                 <label>NOME COMPLETO</label>
                 <input
                   placeholder="Seu nome"
@@ -254,8 +248,10 @@ export default function Contact({ openModal = false, onCloseModal = () => { } })
                   <input
                     placeholder="(00) 00000-0000"
                     value={whatsapp}
-                    onChange={(e) => setWhatsapp(e.target.value)}
+                    // Aqui está o segredo: formata o valor antes de salvar no setWhatsapp
+                    onChange={(e) => setWhatsapp(formatWhatsApp(e.target.value))}
                     required
+                    maxLength={15}
                   />
                 </FormGroup>
 
