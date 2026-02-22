@@ -4,7 +4,7 @@ import Image from 'next/image';
 // import './Agradecimento.css'; 
 
 const WHATSAPP_NUMBER_E164 = "5511963249706";
-const TRIGGER_MESSAGE = "Quero ser parceiro da Darius";
+const TRIGGER_MESSAGE = "Quero fazer um pedido na Bruttus";
 
 export default function AgradecimentoPage() {
   const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER_E164}?text=${encodeURIComponent(TRIGGER_MESSAGE)}`;
