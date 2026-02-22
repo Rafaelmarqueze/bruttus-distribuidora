@@ -6,8 +6,8 @@ export const HeroSection = styled.section`
   display: flex;
   align-items: center;
   background:
-    linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)),
-    url('https://i0.wp.com/foodforum.com.br/wp-content/uploads/2024/04/alimentos-plant-based.jpg?resize=672%2C448&ssl=1')
+  linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.75)),
+    url('/images/herobg.png');
     center / cover no-repeat;
   color: ${({ theme }) => theme.colors.white};
   padding-top: 80px;

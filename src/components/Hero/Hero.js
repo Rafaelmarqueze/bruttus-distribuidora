@@ -6,13 +6,12 @@ export default function Hero() {
     <HeroSection>
       <div className="container">
         <HeroContent>
-          <Subtitle>DISTRIBUIDORA PREMIUM</Subtitle>
+          <Subtitle>FORNECEDOR DE HAMBÚRGUER</Subtitle>
           <Title>
-            BRUTTUS: A QUALIDADE QUE <span>TRANSFORMA</span> SUA HAMBURGUERIA.
+            HAMBÚRGUER DE QUALIDADE COM O <span>PREÇO</span> QUE VOCÊ TANTO PROCURA.
           </Title>
           <p>
-            Seja nosso parceiro e leve não apenas os melhores blends de hambúrguer, 
-            mas também cardápio digital completo por 30 dias grátis.
+            Aumente sua margem de lucro sem abrir mão do sabor. <b>Clique no botão verde do WhatsApp e faça sua cotação.</b>
           </p>
           <CTAButton href="#contato">QUERO SER PARCEIRO →</CTAButton>
         </HeroContent>

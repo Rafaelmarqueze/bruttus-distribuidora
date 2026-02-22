@@ -11,21 +11,21 @@ export default function Commitment() {
     <CommitmentSection id="sobre">
       <div className="container">
         <h2>
-          NOSSA HISTÓRIA É FORJADA NA <span>QUALIDADE</span>.
+          ENTREGA GARANTIDA DE <span>DOMINGO A DOMINGO</span>.
         </h2>
 
         <p>
-          A <span>Bruttus Distribuidora</span> nasceu da paixão por hambúrgueres
-          perfeitos. Entendemos que a alma de uma hamburgueria de sucesso está na
-          qualidade da carne. Por isso, nossa missão é entregar mais do que um
-          produto: entregamos a base para a excelência do seu negócio.
+          Porque seu cliente não espera <span>e você não pode ficar na mão.</span>
+          Nós da Bruttus entendemos como funciona a operação. Em pleno fim 
+          de semana você vende muito <span>hamburgueria cheia, fila andando</span> e é 
+          exatamente nessa hora que a carne acaba e o fornecedor some. 
+          Por isso entregamos 7 dias por semana, inclusive no domingo, para você 
+          nunca parar sua operação por falta de produto.
+          Seu fim de semana vai ser de lucro. Não de aperto.
         </p>
 
         <p>
-          Desde o início, nosso compromisso é com a seleção rigorosa das melhores
-          carnes e a criação de blends que proporcionam sabor, suculência e uma
-          experiência inesquecível para o seu cliente. Somos mais que um
-          fornecedor; somos o parceiro estratégico que sua hamburgueria...
+          <b>Clique no botão do WhatsApp e fale agora com um consultor!</b>
         </p>
 
         <Divider />

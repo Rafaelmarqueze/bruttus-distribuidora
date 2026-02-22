@@ -44,7 +44,6 @@ const GlobalStyles = createGlobalStyle`
   .container {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 0 1rem;
 
     @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
       padding: 0 1.5rem;
